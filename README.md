@@ -3,6 +3,10 @@ jquery-ui-nodeEditor
 
 Node Editor widget for jQuery-UI
 
+Note:
+------------
+This widget is in very early stages, and is not even close to being ready for use.
+
 The plan:
 ---------
 This project seeks to create a node editor similar to
