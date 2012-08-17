@@ -1,0 +1,17 @@
+
+
+body {
+    background-color: #444;
+}
+
+body > .nodeEditor {
+    background-color: white;
+    border-radius: 10px;
+    margin: 30px;
+
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
