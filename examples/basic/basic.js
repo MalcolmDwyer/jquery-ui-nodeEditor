@@ -10,18 +10,29 @@ $(document).ready(function() {
             nodes: [
                 {
                     label: '5',
-                    inputs: [],
                     outputs: [
                         {
                             label: 'Output',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
-                                d.resolve(5);
+                                d.notify(5);
                                 return d.promise;
                             }
                         }
-                    ],
-                    properties: []
+                    ]
+                },
+                {
+                    label: '8',
+                    outputs: [
+                        {
+                            label: 'Output',
+                            fn: function(inputs, properties) {
+                                var d = $.Deferred();
+                                d.notify(8);
+                                return d.promise;
+                            }
+                        }
+                    ]
                 },
                 {
                     label: '+',

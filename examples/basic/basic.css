@@ -5,8 +5,6 @@ body {
 }
 
 body > .nodeEditor {
-    background-color: white;
-    border-radius: 10px;
     margin: 30px;
 
     position: absolute;
