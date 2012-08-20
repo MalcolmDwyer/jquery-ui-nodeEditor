@@ -1,3 +1,6 @@
+// Copyright 2012 - Malcolm Dwyer
+// Distributed under MIT license
+// http://opensource.org/licenses/mit-license.php/
 
 
 (function( $, undefined ) {

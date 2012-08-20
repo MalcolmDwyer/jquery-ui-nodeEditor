@@ -1,4 +1,6 @@
-
+// Copyright 2012 - Malcolm Dwyer
+// Distributed under MIT license
+// http://opensource.org/licenses/mit-license.php/
 
 $(document).ready(function() {
     console.log("Starting basic example for jquery.ui.nodeEditor.js");
