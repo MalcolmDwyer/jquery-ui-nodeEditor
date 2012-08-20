@@ -6,29 +6,41 @@ http://opensource.org/licenses/mit-license.php/
 .ui-nodeEditor {
     /*background-color: white;*/
     font-family: sans-serif;
+    font-size: 10pt;
     display: -webkit-box;
     -webkit-box-orient: horizontal;
 }
 
 .ui-nodeEditor-Menu {
     -webkit-box-flex: 0;
-    border-radius: 10px;
-    background-color: #777;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+    background-color: #eee;
     padding: 10px;
-    margin-right: 10px;
+    margin-right: 0px;
+    overflow-y: scroll;
 }
 
 .ui-nodeEditor-Field {
     -webkit-box-flex: 1;
-    border-radius: 10px;
-    background-color: #888;
+    border-left: solid 1px #111;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    background-color: white;
+    background-image: -webkit-linear-gradient(
+        top,
+        transparent 95%,
+        rgba(0,0,0,.2) 95%,
+        rgba(0,0,0,.2)
+    ), -webkit-linear-gradient(
+        left,
+        transparent 95%,
+        rgba(0,0,0,.2) 95%,
+        rgba(0,0,0,.2)
+    );
+    background-size: 20px 20px, 20px 20px;
     height: 100%;
-    /*top: 0px;
-    left: 140px;
-    bottom: 0px;
-    right: 0px;
-    height: 100%;*/
-
+    box-sizing: border-box;
 }
 
 .ui-nodeEditor-Node {
@@ -37,9 +49,9 @@ http://opensource.org/licenses/mit-license.php/
     box-sizing: border-box;
     border: solid 1px #222;
     width: 80px;
-    height: 90px;
+    /*height: 90px;*/
     margin-bottom: 10px;
-    padding: 5px;
+    cursor: default;
 }
 
 .ui-nodeEditor-Menu  .ui-nodeEditor-Node {
@@ -49,3 +61,48 @@ http://opensource.org/licenses/mit-license.php/
 .ui-nodeEditor-Field  .ui-nodeEditor-Node {
     position: absolute;
 }
+
+.ui-nodeEditor-nodeLabel {
+    width: 100%;
+    background-color: #333;
+    color: white;
+    padding-left: 4px;
+    box-sizing: border-box;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    margin-bottom: 5px;
+    cursor: move;
+    -webkit-user-select: none;
+}
+
+.ui-nodeEditor-nodeInput {
+    text-align: left;
+}
+
+.ui-nodeEditor-nodeOutput {
+    text-align: right;
+}
+
+.ui-nodeEditor-nodeIO > * {
+    cursor: default;
+    display: inline-block;
+    margin-bottom: 4px;
+    vertical-align: middle;
+    -webkit-user-select: none;
+}
+
+.ui-nodeEditor-nodeConnector {
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    border: solid 1px black;
+    box-sizing: border-box;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.ui-nodeEditor-nodeInputLabel, .ui-nodeEditor-nodeOutputLabel {
+    font-size: 9px;
+}
+
+

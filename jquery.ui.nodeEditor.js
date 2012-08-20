@@ -69,7 +69,7 @@ $.widget("ui.nodeEditor", {
 
     _buildNode: function(node) {
         var that = this;
-        var node = $('<div>' + node.label + '</div>')
+        var nodeElement = $('<div></div>')
             .addClass('ui-nodeEditor-Node')
             .appendTo(this.nodeMenu)
             .draggable({
@@ -86,14 +86,40 @@ $.widget("ui.nodeEditor", {
 
                     obj.draggable({
                         containment: 'parent',
-                        stack: '.ui-nodeEditor-Node'
+                        stack: '.ui-nodeEditor-Node',
+                        cancel: '.ui-nodeEditor-nodeConnector'
                     });
 
                     obj.attr('id', '');
                 }
             });
 
-        return node;
+        var label = $('<div class="ui-NodeEditor-nodeLabel">' +
+                          node.label +
+                      '</div>')
+            .appendTo(nodeElement);
+
+        node.inputs = node.inputs || [];
+        $.each(node.inputs, function(idx, input) {
+            $('<div class="ui-nodeEditor-nodeIO ui-nodeEditor-nodeInput">' +
+                  '<div class="ui-nodeEditor-nodeConnector ui-nodeEditor-nodeInputConnector"></div>' +
+                  '<div class="ui-nodeEditor-nodeInputLabel">' +
+                      input.label + '</div>' +
+              '</div>')
+              .appendTo(nodeElement);
+        });
+
+        node.outputs = node.outputs || [];
+        $.each(node.outputs, function(idx, output) {
+            $('<div class="ui-nodeEditor-nodeIO ui-nodeEditor-nodeOutput">' +
+                  '<div class="ui-nodeEditor-nodeOutputLabel">' +
+                      output.label + '</div>' +
+                  '<div class="ui-nodeEditor-nodeConnector ui-nodeEditor-nodeOutputConnector"></div>' +
+              '</div>')
+              .appendTo(nodeElement);
+        });
+
+        return nodeElement;
     }
 
 });
