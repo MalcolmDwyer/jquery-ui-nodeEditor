@@ -4,7 +4,9 @@ Distributed under MIT license
 http://opensource.org/licenses/mit-license.php/
 */
 .ui-nodeEditor {
-    /*background-color: white;*/
+    position: relative;
+    top: 0px;
+    left: 0px;
     font-family: sans-serif;
     font-size: 10pt;
     display: -webkit-box;

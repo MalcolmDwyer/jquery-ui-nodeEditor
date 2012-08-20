@@ -24,6 +24,8 @@ $.widget("ui.nodeEditor", {
         this._buildNodeField();
 
         this._populateNodeMenu();
+
+        this._setupEvents();
     },
 
     _buildNodeMenu: function() {
@@ -57,7 +59,7 @@ $.widget("ui.nodeEditor", {
             .droppable({
                 accept: '.ui-nodeEditor-Node',
                 drop: function(ev,ui) {
-                    if ($(ui.helper).parents('.ui-nodeEditor-Menu').length) {
+                    if ($(ui.helper).closest('.ui-nodeEditor-Menu').length) {
                         var element = $(ui.draggable).clone();
                         $(this).append(element);
                         element.attr('id', 'clone');
@@ -120,6 +122,103 @@ $.widget("ui.nodeEditor", {
         });
 
         return nodeElement;
+    },
+
+    _setupEvents: function() {
+        this._setupConnectorEvents();
+    },
+
+    _setupConnectorEvents: function() {
+        var that = this;
+   
+        this.nodeField.on('mousedown', '.ui-nodeEditor-nodeConnector', function(ev) {
+            console.log('clicked IO');
+
+            var editorPosition = $(that.element).offset();
+            var pos = {
+                'top': ev.pageY - editorPosition.top,
+                'left': ev.pageX - editorPosition.left
+            }
+
+            var connectorBox = $('<div></div>')
+                .attr('id', 'ui-nodeEditor-activeConnector')
+                .data({
+                    'clickStartPosition': pos,
+                    'clickStartConnector': $(this)
+                })
+                .css({
+                    'top': pos.top,
+                    'left': pos.left,
+                    'background-color': '#fcc',
+                    'position': 'absolute',
+                    'z-index': 100,
+                    'pointer-events': 'none'
+
+                })
+                .appendTo(that.nodeField);
+
+            
+
+        });
+
+        this.nodeField.on('mousemove', function(ev) {
+            if ($('#ui-nodeEditor-activeConnector').length) {
+                var connector = $('#ui-nodeEditor-activeConnector');
+                var connectorPosition = connector.data('clickStartPosition');
+
+                var position = connector.position();
+                var editorPosition = $(that.element).offset();
+
+                var connectorPageX = connectorPosition.left + editorPosition.left;
+                var connectorPageY = connectorPosition.top + editorPosition.top;
+
+                connector.css({
+                    'width': ev.pageX - editorPosition.left - position.left,
+                    'top': connectorPosition.top,
+                    'left': connectorPosition.left,
+                    'height': ev.pageY - editorPosition.top - position.top,
+                    'background-color': '#fcc'
+                });
+
+                if (ev.pageX < connectorPageX) {
+                    //console.log('left of start');
+                    connector.css({
+                        'left': ev.pageX - editorPosition.left,
+                        'width': connectorPageX - ev.pageX,
+                        'background-color': '#cfc'
+                    });
+                }
+
+                if (ev.pageY < connectorPageY) {
+                    //console.log('above start');
+                    connector.css({
+                        'top': ev.pageY - editorPosition.top,
+                        'height': connectorPageY - ev.pageY,
+                        'background-color': '#ccf'
+                    });
+                }
+
+            }
+        });
+
+        this.nodeField.on('mouseup', '.ui-nodeEditor-nodeConnector', function(ev) {
+
+            if ($('#ui-nodeEditor-activeConnector').length) {
+                ev.stopPropagation();
+                console.log('making connection!');
+
+                $('#ui-nodeEditor-activeConnector').attr('id', '');
+            }
+        });
+
+        this.nodeField.on('mouseup', function() {
+            if ($('#ui-nodeEditor-activeConnector').length) {
+                console.log('releasing connector');
+
+                $('#ui-nodeEditor-activeConnector').empty().remove();
+            }
+        });
+
     }
 
 });
