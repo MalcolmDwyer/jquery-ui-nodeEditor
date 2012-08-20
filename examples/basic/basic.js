@@ -14,7 +14,7 @@ $(document).ready(function() {
                     label: '5',
                     outputs: [
                         {
-                            label: 'Output',
+                            label: 'Value',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
                                 d.notify(5);
@@ -27,7 +27,7 @@ $(document).ready(function() {
                     label: '8',
                     outputs: [
                         {
-                            label: 'Output',
+                            label: 'Value',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
                                 d.notify(8);
@@ -37,7 +37,7 @@ $(document).ready(function() {
                     ]
                 },
                 {
-                    label: '+',
+                    label: 'Add',
                     inputs: [
                         {
                             id: 'A',
@@ -50,7 +50,7 @@ $(document).ready(function() {
                     ],
                     outputs: [
                         {
-                            label: 'Output',
+                            label: 'Sum',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
                                 d.resolve(parseInt(inputs.A + inputs.B));
