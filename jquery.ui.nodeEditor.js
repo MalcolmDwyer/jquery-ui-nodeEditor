@@ -53,6 +53,7 @@ $.widget("ui.nodeEditor", {
     _buildNodeField: function() {
         console.group('buildNodeMenu');
 
+        var that = this;
         this.nodeField = $('<div></div>')
             .addClass('ui-nodeEditor-Field')
             .appendTo(this.element)
@@ -60,9 +61,12 @@ $.widget("ui.nodeEditor", {
                 accept: '.ui-nodeEditor-Node',
                 drop: function(ev,ui) {
                     if ($(ui.helper).closest('.ui-nodeEditor-Menu').length) {
-                        var element = $(ui.draggable).clone();
+                        console.log('Field drop');
+                        var element = $(ui.draggable).clone(false);
+                        var nodeCopy = $.extend({}, $(ui.draggable).data('node'));
                         $(this).append(element);
                         element.attr('id', 'clone');
+                        that._setupNodeInField(element, nodeCopy);
                     }
                 }
             });
@@ -74,6 +78,7 @@ $.widget("ui.nodeEditor", {
         var nodeElement = $('<div></div>')
             .addClass('ui-nodeEditor-Node')
             .appendTo(this.nodeMenu)
+            .data('node', node)
             .draggable({
                 revert: 'invalid',
                 containment: '.ui-nodeEditor',
@@ -96,6 +101,12 @@ $.widget("ui.nodeEditor", {
                 }
             });
 
+        this._buildNodeIO(nodeElement, node);
+
+        return nodeElement;
+    },
+
+    _buildNodeIO: function(nodeElement, node) {
         var label = $('<div class="ui-NodeEditor-nodeLabel">' +
                           node.label +
                       '</div>')
@@ -113,15 +124,64 @@ $.widget("ui.nodeEditor", {
 
         node.outputs = node.outputs || [];
         $.each(node.outputs, function(idx, output) {
-            $('<div class="ui-nodeEditor-nodeIO ui-nodeEditor-nodeOutput">' +
+            var outputDiv = $('<div class="ui-nodeEditor-nodeIO ui-nodeEditor-nodeOutput">' +
                   '<div class="ui-nodeEditor-nodeOutputLabel">' +
                       output.label + '</div>' +
-                  '<div class="ui-nodeEditor-nodeConnector ui-nodeEditor-nodeOutputConnector"></div>' +
               '</div>')
               .appendTo(nodeElement);
+
+            var connector = $('<div></div>')
+                .addClass('ui-nodeEditor-nodeConnector')
+                .addClass('ui-nodeEditor-nodeOutputConnector')
+                .appendTo(outputDiv);
+
+            console.log('built output connector');
+            console.log(output);
+        });
+    },
+
+    _setupNodeInField: function(element, node) {
+        console.group('_setupNodeInField ' + node.label);
+        element.data('node', node);
+
+        element.empty();
+        this._buildNodeIO(element, node);
+
+        node.state = {
+            inputs: {},
+            properties: {}
+        };
+
+        element.find('.ui-nodeEditor-nodeInputConnector').each(function (idx, input) {
+            console.log('input[' + idx + '] ' + node.inputs[idx].label);
+            var inputDeferred = $.Deferred();
+            $(input).data('deferred', inputDeferred);
+
+            inputDeferred.progress(function(data) {
+                console.log('input updated with: ' + data + '   (storing state)');
+                node.state.inputs[node.inputs[idx].label] = data;
+                element.find('.ui-nodeEditor-nodeOutputConnector').each(function (idx, output) {
+                    console.log('  Notifying output');
+                    $(output).data('promise')();
+                });
+            });
         });
 
-        return nodeElement;
+        element.find('.ui-nodeEditor-nodeOutputConnector').each(function (idx, output) {
+            if (node.outputs[idx] && node.outputs[idx].fn) {
+                //$(output).data('promise', node.outputs[idx].fn);
+                $(output).data('promise', function() {
+                    console.log('returning promise with inputs:');
+                    console.log(node.state);
+                    return node.outputs[idx].fn(node.state);
+                });
+            }
+            else {
+                console.log('something is wrong setting output function ' + node.label);
+            }
+        });
+
+        console.groupEnd();
     },
 
     _setupEvents: function() {
@@ -140,7 +200,7 @@ $.widget("ui.nodeEditor", {
                 'left': ev.pageX - editorPosition.left
             }
 
-            var connectorBox = $('<div></div>')
+            var connectorBox = $('<div class="ui-nodeEditor-wire"></div>')
                 .attr('id', 'ui-nodeEditor-activeConnector')
                 .data({
                     'clickStartPosition': pos,
@@ -150,9 +210,6 @@ $.widget("ui.nodeEditor", {
                     'top': pos.top,
                     'left': pos.left,
                     'background-color': '#fcc',
-                    'position': 'absolute',
-                    'z-index': 100,
-                    'pointer-events': 'none'
 
                 })
                 .appendTo(that.nodeField);
@@ -207,7 +264,58 @@ $.widget("ui.nodeEditor", {
                 ev.stopPropagation();
                 console.log('making connection!');
 
-                $('#ui-nodeEditor-activeConnector').attr('id', '');
+                var wire = $('#ui-nodeEditor-activeConnector');
+                var wireOrigin = wire.data('clickStartConnector');
+
+                wire.attr('id', '');
+
+                wire.data('clickEndConnector', $(this));
+
+                var from, to;
+
+                if (  $(this).hasClass('ui-nodeEditor-nodeOuptputConnector') &&
+                      wireOrigin.hasClass('ui-nodeEditor-nodeInputConnector')) {
+
+                      from = $(this);
+                      to   = wireOrigin;
+
+                }
+                else if (  $(this).hasClass('ui-nodeEditor-nodeInputConnector') &&
+                      wireOrigin.hasClass('ui-nodeEditor-nodeOutputConnector')) {
+
+                      from = wireOrigin;
+                      to   = $(this);
+                }
+                else {
+                    console.error('Tried to connect input to input or output to output');
+                    wire.empty().remove();
+                    return;
+                }
+
+                wire.data({
+                    'from': $(this),
+                    'to':   wireOrigin
+                });
+
+                to.data({'wire': wire});
+                //console.log('Triggering getValue on wire end-point');
+                //$(this).trigger('getValue');
+
+                var getPromise = from.data('promise')();
+                var putDeferred = to.data('deferred');
+                //console.log(wirePromise);
+                //if (wirePromise().notify) {
+                    getPromise().progress(function(data) {
+                        console.log('wire promise with ' + data);
+                        putDeferred.notify(data);
+                    });
+                //}
+                //else {
+                    //console.log('something is wrong');
+                    //console.log(wirePromise);
+                //}
+
+
             }
         });
 

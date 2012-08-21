@@ -36,6 +36,18 @@ $(document).ready(function() {
                         }
                     ]
                 },
+                /*{
+                    label: 'Display',
+                    inputs: [
+                        {
+                            id: 'A',
+                            label: 'A'
+                        }
+                    ],
+                    display: function(inputs, properties) {
+                        
+                    }
+                },*/
                 {
                     label: 'Add',
                     inputs: [
@@ -51,9 +63,26 @@ $(document).ready(function() {
                     outputs: [
                         {
                             label: 'Sum',
-                            fn: function(inputs, properties) {
+                            fn: function(nodeState) {
+                                console.group('Sum fn()');
+                                console.log(nodeState);
                                 var d = $.Deferred();
-                                d.resolve(parseInt(inputs.A + inputs.B));
+                                if (typeof nodeState === 'undefined') {
+                                    console.error('Node state undefined');
+                                    d.reject();
+                                    console.groupEnd();
+                                    return d.promise;
+                                }
+
+                                inputs = nodeState.inputs || {};
+                                inputs.A = inputs.A || 0;
+                                inputs.B = inputs.B || 0;
+
+                                console.log('Sum fn() A:' + inputs.A + '  B:' + inputs.B);
+                                var out = parseInt(inputs.A + inputs.B);
+                                console.log('    -->  ' + out);
+                                d.notify(out);
+                                console.groupEnd();
                                 return d.promise;
                             }
                         }

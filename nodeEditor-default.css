@@ -107,4 +107,15 @@ http://opensource.org/licenses/mit-license.php/
     font-size: 9px;
 }
 
+.ui-nodeEditor-wire {
+    position: absolute;
+    z-index:  100;
+    pointer-events: none;
 
+/* testing stuff...
+border: solid 5px;
+border-color: black transparent transparent transparent;
+border-width: 5px 5px 0px 0px;
+border-radius: 0px 186px 0px 0px;
+*/
+}
