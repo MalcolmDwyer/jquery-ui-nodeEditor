@@ -152,7 +152,7 @@ $.widget("ui.nodeEditor", {
             inputs: {},
             properties: {}
         };
-        that._updateAlt(element, node);
+        this._updateTip(element, node);
 
         node.update = function(updateMap) {
 
@@ -170,9 +170,11 @@ $.widget("ui.nodeEditor", {
                 }
             }
 
+            that._updateTip(element, node);
+
             //console.log('new state:');
             //console.log(node.state);
-            console.groupEnd();
+            //console.groupEnd();
 
             element.find('.ui-nodeEditor-nodeOutputConnector').each(function (idx, output) {
                 $(output).data('update')();
@@ -222,12 +224,14 @@ $.widget("ui.nodeEditor", {
         //console.groupEnd();
     },
 
-    _updateAlt: function(element, node) {
-        var altString = '[' + node.label + ']';
+    _updateTip: function(element, node) {
+        console.log('updateTip()');
+        var tipString;
+        tipString = '[' + node.label + ']';
         for (input in node.state.inputs) {
-            altString += '    ' + input + ':  ' + node.state.inputs[input];
+            tipString += '    ' + input + ':  ' + node.state.inputs[input];
         };
-        $(element).attr('alt', altString);
+        $(element).attr('title', tipString);
     },
 
     _setupEvents: function() {
