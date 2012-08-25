@@ -210,6 +210,7 @@ $.widget("ui.nodeEditor", {
 
                     resultDeferred.done(function(result) {
                         console.log('Computed result for output, notifying: ' + result);
+                        that._updateTip(output, node, result);
                         outD.notify(result);
                     });
                 });
@@ -224,21 +225,27 @@ $.widget("ui.nodeEditor", {
         //console.groupEnd();
     },
 
-    _updateTip: function(element, node) {
-        console.log('updateTip()');
+    _updateTip: function(element, node, result) {
+        //console.log('updateTip()');
         var tipString;
-        tipString = '[' + node.label + ']';
-        for (input in node.state.inputs) {
-            tipString += '    ' + input + ':  ' + node.state.inputs[input];
-        };
+
+        if (node.label && node.state) {
+            tipString = '[' + node.label + ']';
+            for (input in node.state.inputs) {
+                tipString += '    ' + input + ':  ' + node.state.inputs[input];
+            };
+        }
+        if (result) {
+            tipString += ' => ' + result;
+        }
         $(element).attr('title', tipString);
     },
 
     _setupEvents: function() {
-        this._setupConnectorEvents();
+        this._setupWireEvents();
     },
 
-    _setupConnectorEvents: function() {
+    _setupWireEvents: function() {
         var that = this;
    
         this.nodeField.on('mousedown', '.ui-nodeEditor-nodeConnector', function(ev) {
@@ -249,17 +256,16 @@ $.widget("ui.nodeEditor", {
                 'left': ev.pageX - editorPosition.left
             }
 
-            var connectorBox = $('<div class="ui-nodeEditor-wire"></div>')
-                .attr('id', 'ui-nodeEditor-activeConnector')
+            var wireBox = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
+                .attr('id', 'ui-nodeEditor-activeWire')
                 .data({
                     'clickStartPosition': pos,
                     'clickStartConnector': $(this)
                 })
                 .css({
                     'top': pos.top,
-                    'left': pos.left,
-                    'background-color': '#fcc',
-
+                    'left': pos.left
+                    //'background-color': '#fcc',
                 })
                 .appendTo(that.nodeField);
 
@@ -268,40 +274,48 @@ $.widget("ui.nodeEditor", {
         });
 
         this.nodeField.on('mousemove', function(ev) {
-            if ($('#ui-nodeEditor-activeConnector').length) {
-                var connector = $('#ui-nodeEditor-activeConnector');
-                var connectorPosition = connector.data('clickStartPosition');
+            if ($('#ui-nodeEditor-activeWire').length) {
+                var wire = $('#ui-nodeEditor-activeWire');
+                var wirePosition = wire.data('clickStartPosition');
 
-                var position = connector.position();
+                var position = wire.position();
                 var editorPosition = $(that.element).offset();
 
-                var connectorPageX = connectorPosition.left + editorPosition.left;
-                var connectorPageY = connectorPosition.top + editorPosition.top;
+                var wirePageX = wirePosition.left + editorPosition.left;
+                var wirePageY = wirePosition.top + editorPosition.top;
 
-                connector.css({
+                wire.css({
                     'width': ev.pageX - editorPosition.left - position.left,
-                    'top': connectorPosition.top,
-                    'left': connectorPosition.left,
-                    'height': ev.pageY - editorPosition.top - position.top,
-                    'background-color': '#fcc'
+                    'top': wirePosition.top,
+                    'left': wirePosition.left,
+                    'height': ev.pageY - editorPosition.top - position.top
+                    //'background-color': '#fcc'
                 });
 
-                if (ev.pageX < connectorPageX) {
+                if (ev.pageX < wirePageX) {
                     //console.log('left of start');
-                    connector.css({
+                    wire.css({
                         'left': ev.pageX - editorPosition.left,
-                        'width': connectorPageX - ev.pageX,
-                        'background-color': '#cfc'
+                        'width': wirePageX - ev.pageX
+                        //'background-color': '#cfc'
                     });
+                    wire.children().addClass('flip');
+                }
+                else {
+                    wire.children().removeClass('flip');
                 }
 
-                if (ev.pageY < connectorPageY) {
+                if (ev.pageY < wirePageY) {
                     //console.log('above start');
-                    connector.css({
+                    wire.css({
                         'top': ev.pageY - editorPosition.top,
-                        'height': connectorPageY - ev.pageY,
-                        'background-color': '#ccf'
+                        'height': wirePageY - ev.pageY
+                        //'background-color': '#ccf'
                     });
+                    wire.addClass('flip');
+                }
+                else {
+                    wire.removeClass('flip');
                 }
 
             }
@@ -309,11 +323,11 @@ $.widget("ui.nodeEditor", {
 
         this.nodeField.on('mouseup', '.ui-nodeEditor-nodeConnector', function(ev) {
 
-            if ($('#ui-nodeEditor-activeConnector').length) {
+            if ($('#ui-nodeEditor-activeWire').length) {
                 ev.stopPropagation();
                 console.log('making connection!');
 
-                var wire = $('#ui-nodeEditor-activeConnector');
+                var wire = $('#ui-nodeEditor-activeWire');
                 var wireOrigin = wire.data('clickStartConnector');
 
                 wire.attr('id', '');
@@ -353,10 +367,10 @@ $.widget("ui.nodeEditor", {
         });
 
         this.nodeField.on('mouseup', function() {
-            if ($('#ui-nodeEditor-activeConnector').length) {
-                console.log('releasing connector');
+            if ($('#ui-nodeEditor-activeWire').length) {
+                console.log('releasing wire');
 
-                $('#ui-nodeEditor-activeConnector').empty().remove();
+                $('#ui-nodeEditor-activeWire').empty().remove();
             }
         });
 

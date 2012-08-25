@@ -28,6 +28,8 @@ http://opensource.org/licenses/mit-license.php/
     border-left: solid 1px #111;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
+    border: 1px solid white;
+    /*
     background-color: white;
     background-image: -webkit-linear-gradient(
         top,
@@ -40,20 +42,40 @@ http://opensource.org/licenses/mit-license.php/
         rgba(0,0,0,.2) 95%,
         rgba(0,0,0,.2)
     );
+    */
+    background-color: #111;
+    background-image: -webkit-linear-gradient(
+        top,
+        transparent 95%,
+        rgba(255,255,255,.2) 95%,
+        rgba(255,255,255,.2)
+    ), -webkit-linear-gradient(
+        left,
+        transparent 95%,
+        rgba(255,255,255,.2) 95%,
+        rgba(255,255,255,.2)
+    );
     background-size: 20px 20px, 20px 20px;
     height: 100%;
     box-sizing: border-box;
+    cursor: default;
+    -webkit-user-select: none;
 }
 
 .ui-nodeEditor-Node {
     background-color: #ccc;
     border-radius: 5px;
+    -moz-border-radius: 5px;
     box-sizing: border-box;
-    border: solid 1px #222;
+    /*border: solid 1px #222;*/
     width: 80px;
     /*height: 90px;*/
     margin-bottom: 10px;
     cursor: default;
+
+    -moz-box-shadow:    1px 1px 9px black;
+    -webkit-box-shadow: 1px 1px 9px black;
+    box-shadow:         1px 1px 9px black;
 }
 
 .ui-nodeEditor-Menu  .ui-nodeEditor-Node {
@@ -75,6 +97,7 @@ http://opensource.org/licenses/mit-license.php/
     margin-bottom: 5px;
     cursor: move;
     -webkit-user-select: none;
+    border: solid 1px #eee;
 }
 
 .ui-nodeEditor-nodeInput {
@@ -101,6 +124,7 @@ http://opensource.org/licenses/mit-license.php/
     box-sizing: border-box;
     margin-left: 2px;
     margin-right: 2px;
+    cursor: default;
 }
 
 .ui-nodeEditor-nodeInputLabel, .ui-nodeEditor-nodeOutputLabel {
@@ -119,3 +143,79 @@ border-width: 5px 5px 0px 0px;
 border-radius: 0px 186px 0px 0px;
 */
 }
+
+/* lower right */
+.ui-nodeEditor-wire > .wire1 {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    border-width: 3px 3px 0px 0px;
+    border-style: solid;
+    border-color: #fa4;
+    border-top-right-radius: 50%;
+}
+
+.ui-nodeEditor-wire > .wire2 {
+    position: absolute;
+    width: 50%;
+    height: 50%;
+    top: 50%;
+    left: 50%;
+    border-width: 0px 0px 3px 3px;
+    border-style: solid;
+    border-color: #fa4;
+    border-bottom-left-radius: 50%;
+}
+
+/* upper right */
+.ui-nodeEditor-wire.flip > .wire1 {
+    top: 50%;
+    left: 0;
+    border-width: 0px 3px 3px 0px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 50%;
+}
+
+.ui-nodeEditor-wire.flip > .wire2 {
+    top: 0;
+    left: 50%;
+    border-width: 3px 0px 0px 3px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 50%;
+}
+
+/* lower left */
+.ui-nodeEditor-wire > .wire1.flip {
+    border-radius: 0;
+    border-width: 0px 3px 3px 0px;
+    border-bottom-right-radius: 50%;
+    top: 50%;
+    left: 0;
+}
+
+.ui-nodeEditor-wire > .wire2.flip {
+    border-radius: 0;
+    border-width: 3px 0px 0px 3px;
+    border-top-left-radius: 50%;
+    top: 0;
+    left: 50%;
+}
+
+/* upper left */
+.ui-nodeEditor-wire.flip > .wire1.flip {
+    border-width: 3px 3px 0px 0px;
+    border-radius: 0;
+    border-top-right-radius: 50%;
+    top: 0px;
+    left: 0px;
+}
+
+.ui-nodeEditor-wire.flip > .wire2.flip {
+    border-width: 0px 0px 3px 3px;
+    border-radius: 0;
+    border-bottom-left-radius: 50%;
+    top: 50%;
+    left: 50%;
+}
+
+
