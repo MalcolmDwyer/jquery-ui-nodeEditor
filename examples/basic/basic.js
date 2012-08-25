@@ -17,8 +17,8 @@ $(document).ready(function() {
                             label: 'Value',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
-                                d.notify(5);
-                                return d.promise;
+                                d.resolve(5);
+                                return d.promise();
                             }
                         }
                     ]
@@ -30,8 +30,8 @@ $(document).ready(function() {
                             label: 'Value',
                             fn: function(inputs, properties) {
                                 var d = $.Deferred();
-                                d.notify(8);
-                                return d.promise;
+                                d.resolve(8);
+                                return d.promise();
                             }
                         }
                     ]
@@ -65,13 +65,13 @@ $(document).ready(function() {
                             label: 'Sum',
                             fn: function(nodeState) {
                                 console.group('Sum fn()');
-                                console.log(nodeState);
+                                //console.log(nodeState);
                                 var d = $.Deferred();
                                 if (typeof nodeState === 'undefined') {
                                     console.error('Node state undefined');
                                     d.reject();
                                     console.groupEnd();
-                                    return d.promise;
+                                    return d.promise();
                                 }
 
                                 inputs = nodeState.inputs || {};
@@ -81,9 +81,9 @@ $(document).ready(function() {
                                 console.log('Sum fn() A:' + inputs.A + '  B:' + inputs.B);
                                 var out = parseInt(inputs.A + inputs.B);
                                 console.log('    -->  ' + out);
-                                d.notify(out);
+                                d.resolve(out);
                                 console.groupEnd();
-                                return d.promise;
+                                return d.promise();
                             }
                         }
                     ]
