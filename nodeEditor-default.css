@@ -9,12 +9,19 @@ http://opensource.org/licenses/mit-license.php/
     left: 0px;
     font-family: sans-serif;
     font-size: 10pt;
+
     display: -webkit-box;
     -webkit-box-orient: horizontal;
+    display: -moz-box;
+    -moz-box-orient: horizontal;
+    display: box;
+    box-orient: horizontal;
 }
 
 .ui-nodeEditor-Menu {
     -webkit-box-flex: 0;
+    -moz-box-flex: 0;
+    box-flex: 0;
     border-top-left-radius: 15px;
     border-bottom-left-radius: 15px;
     background-color: #eee;
@@ -25,6 +32,8 @@ http://opensource.org/licenses/mit-license.php/
 
 .ui-nodeEditor-Field {
     -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    box-flex: 1;
     border-left: solid 1px #111;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -60,6 +69,8 @@ http://opensource.org/licenses/mit-license.php/
     box-sizing: border-box;
     cursor: default;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 .ui-nodeEditor-Node {
@@ -77,6 +88,8 @@ http://opensource.org/licenses/mit-license.php/
     -webkit-box-shadow: 1px 1px 9px black;
     box-shadow:         1px 1px 9px black;
     -webkit-transition: background-color .2s;
+    -moz-transition: background-color .2s;
+    transition: background-color .2s;
 }
 
 .ui-nodeEditor-Node.Busy {
@@ -102,6 +115,8 @@ http://opensource.org/licenses/mit-license.php/
     margin-bottom: 5px;
     cursor: move;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
     /*border: solid 1px #eee;*/
 }
 
@@ -119,6 +134,8 @@ http://opensource.org/licenses/mit-license.php/
     margin-bottom: 4px;
     vertical-align: middle;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
 }
 
 .ui-nodeEditor-nodeConnector {
