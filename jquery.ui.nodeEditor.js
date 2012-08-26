@@ -76,9 +76,9 @@ $.widget("ui.nodeEditor", {
         // to it, the wires need to move too.
         
         this.nodeField.on('dragstart', '.ui-nodeEditor-Node', function(ev, ui) {
-           console.log('drag start in field on ' + $(this).text());
+           //console.log('drag start in field on ' + $(this).text());
            $(this).find('.ui-nodeEditor-nodeConnector').each(function(idx, connector) {
-               console.log('moving connector ' + idx);
+               //console.log('moving connector ' + idx);
                //$($(connector).data('wire')).attr('id', 'ui-nodeEditor-activeWire');
                $($(connector).data('wire')).addClass('ui-nodeEditor-activeWire');
            });
@@ -86,9 +86,9 @@ $.widget("ui.nodeEditor", {
         });
 
         this.nodeField.on('dragstop', '.ui-nodeEditor-Node', function(ev, ui) {
-           console.log('drag stop in field on ' + $(this).text());
+           //console.log('drag stop in field on ' + $(this).text());
            $(this).find('.ui-nodeEditor-nodeConnector').each(function(idx, connector) {
-               console.log('moving connector ' + idx);
+               //console.log('done moving connector ' + idx);
                //$($(connector).data('wire')).attr('id', 'ui-nodeEditor-activeWire');
                $($(connector).data('wire')).removeClass('ui-nodeEditor-activeWire');
            });
@@ -275,26 +275,33 @@ $.widget("ui.nodeEditor", {
    
         this.nodeField.on('mousedown', '.ui-nodeEditor-nodeConnector', function(ev) {
 
-            var editorPosition = $(that.element).offset();
-            var pos = {
-                'top': $(this).offset().top - editorPosition.top + $(this).height()/2,
-                'left': $(this).offset().left - editorPosition.left + $(this).width()/2
+            var wireData = $(this).data('wire');
+
+            if ($(this).hasClass('ui-nodeEditor-nodeInputConnector') && wireData) {
+                console.log('moving existing wire');
+                $(wireData).addClass('ui-nodeEditor-activeWire');
+                $(wireData).data('clickEndConnector', null);
+                $(this).data('update')(0);
             }
+            else {
+                var editorPosition = $(that.element).offset();
+                var pos = {
+                    'top': $(this).offset().top - editorPosition.top + $(this).height()/2,
+                    'left': $(this).offset().left - editorPosition.left + $(this).width()/2
+                }
 
-            var wireBox = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
-                .addClass('ui-nodeEditor-activeWire')
-                .data({
-                    'clickStartPosition': pos,
-                    'clickStartConnector': $(this)
-                })
-                .css({
-                    'top': pos.top,
-                    'left': pos.left
-                })
-                .appendTo(that.nodeField);
-
-            
-
+                var wireBox = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
+                    .addClass('ui-nodeEditor-activeWire')
+                    .data({
+                        'clickStartPosition': pos,
+                        'clickStartConnector': $(this)
+                    })
+                    .css({
+                        'top': pos.top,
+                        'left': pos.left
+                    })
+                    .appendTo(that.nodeField);
+            }
         });
 
         this.nodeField.on('mousemove', function(ev) {
@@ -373,8 +380,8 @@ $.widget("ui.nodeEditor", {
 
                 var from, to;
 
-                if (  $(this).hasClass('ui-nodeEditor-nodeOuptputConnector') &&
-                      wireOrigin.hasClass('ui-nodeEditor-nodeInputConnector')) {
+                if (  $(this).hasClass('ui-nodeEditor-nodeOutputConnector') &&
+                      $(wireOrigin).hasClass('ui-nodeEditor-nodeInputConnector')) {
 
                       from = $(this);
                       to   = wireOrigin;
