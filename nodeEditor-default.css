@@ -29,7 +29,6 @@ http://opensource.org/licenses/mit-license.php/
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
     border: 1px solid white;
-    /*
     background-color: white;
     background-image: -webkit-linear-gradient(
         top,
@@ -42,7 +41,7 @@ http://opensource.org/licenses/mit-license.php/
         rgba(0,0,0,.2) 95%,
         rgba(0,0,0,.2)
     );
-    */
+    /*
     background-color: #111;
     background-image: -webkit-linear-gradient(
         top,
@@ -55,6 +54,7 @@ http://opensource.org/licenses/mit-license.php/
         rgba(255,255,255,.2) 95%,
         rgba(255,255,255,.2)
     );
+    */
     background-size: 20px 20px, 20px 20px;
     height: 100%;
     box-sizing: border-box;
@@ -76,6 +76,11 @@ http://opensource.org/licenses/mit-license.php/
     -moz-box-shadow:    1px 1px 9px black;
     -webkit-box-shadow: 1px 1px 9px black;
     box-shadow:         1px 1px 9px black;
+    -webkit-transition: background-color .2s;
+}
+
+.ui-nodeEditor-Node.Busy {
+    background-color: #fcc;
 }
 
 .ui-nodeEditor-Menu  .ui-nodeEditor-Node {
@@ -97,7 +102,7 @@ http://opensource.org/licenses/mit-license.php/
     margin-bottom: 5px;
     cursor: move;
     -webkit-user-select: none;
-    border: solid 1px #eee;
+    /*border: solid 1px #eee;*/
 }
 
 .ui-nodeEditor-nodeInput {
@@ -152,7 +157,10 @@ border-radius: 0px 186px 0px 0px;
     border-width: 3px 3px 0px 0px;
     border-style: solid;
     border-color: #fa4;
-    border-top-right-radius: 50%;
+    border-top-right-radius: 100%;
+    /*
+    background-color: rgba(255,0,0,.1);
+    */
 }
 
 .ui-nodeEditor-wire > .wire2 {
@@ -164,7 +172,10 @@ border-radius: 0px 186px 0px 0px;
     border-width: 0px 0px 3px 3px;
     border-style: solid;
     border-color: #fa4;
-    border-bottom-left-radius: 50%;
+    border-bottom-left-radius: 100%;
+    /*
+    background-color: rgba(0,0,255,.1);
+    */
 }
 
 /* upper right */
@@ -173,7 +184,7 @@ border-radius: 0px 186px 0px 0px;
     left: 0;
     border-width: 0px 3px 3px 0px;
     border-top-right-radius: 0;
-    border-bottom-right-radius: 50%;
+    border-bottom-right-radius: 100%;
 }
 
 .ui-nodeEditor-wire.flip > .wire2 {
@@ -181,14 +192,14 @@ border-radius: 0px 186px 0px 0px;
     left: 50%;
     border-width: 3px 0px 0px 3px;
     border-bottom-left-radius: 0;
-    border-top-left-radius: 50%;
+    border-top-left-radius: 100%;
 }
 
 /* lower left */
 .ui-nodeEditor-wire > .wire1.flip {
     border-radius: 0;
     border-width: 0px 3px 3px 0px;
-    border-bottom-right-radius: 50%;
+    border-bottom-right-radius: 100%;
     top: 50%;
     left: 0;
 }
@@ -196,7 +207,7 @@ border-radius: 0px 186px 0px 0px;
 .ui-nodeEditor-wire > .wire2.flip {
     border-radius: 0;
     border-width: 3px 0px 0px 3px;
-    border-top-left-radius: 50%;
+    border-top-left-radius: 100%;
     top: 0;
     left: 50%;
 }
@@ -205,7 +216,7 @@ border-radius: 0px 186px 0px 0px;
 .ui-nodeEditor-wire.flip > .wire1.flip {
     border-width: 3px 3px 0px 0px;
     border-radius: 0;
-    border-top-right-radius: 50%;
+    border-top-right-radius: 100%;
     top: 0px;
     left: 0px;
 }
@@ -213,7 +224,7 @@ border-radius: 0px 186px 0px 0px;
 .ui-nodeEditor-wire.flip > .wire2.flip {
     border-width: 0px 0px 3px 3px;
     border-radius: 0;
-    border-bottom-left-radius: 50%;
+    border-bottom-left-radius: 100%;
     top: 50%;
     left: 50%;
 }

@@ -71,6 +71,30 @@ $.widget("ui.nodeEditor", {
                 }
             });
         //console.groupEnd();
+
+        // If the node gets dragged around, and has wires connected
+        // to it, the wires need to move too.
+        
+        this.nodeField.on('dragstart', '.ui-nodeEditor-Node', function(ev, ui) {
+           console.log('drag start in field on ' + $(this).text());
+           $(this).find('.ui-nodeEditor-nodeConnector').each(function(idx, connector) {
+               console.log('moving connector ' + idx);
+               //$($(connector).data('wire')).attr('id', 'ui-nodeEditor-activeWire');
+               $($(connector).data('wire')).addClass('ui-nodeEditor-activeWire');
+           });
+           that.nodeDrag = true;
+        });
+
+        this.nodeField.on('dragstop', '.ui-nodeEditor-Node', function(ev, ui) {
+           console.log('drag stop in field on ' + $(this).text());
+           $(this).find('.ui-nodeEditor-nodeConnector').each(function(idx, connector) {
+               console.log('moving connector ' + idx);
+               //$($(connector).data('wire')).attr('id', 'ui-nodeEditor-activeWire');
+               $($(connector).data('wire')).removeClass('ui-nodeEditor-activeWire');
+           });
+           that.nodeDrag = false;
+        });
+        
     },
 
     _buildNode: function(node) {
@@ -180,6 +204,9 @@ $.widget("ui.nodeEditor", {
                 $(output).data('update')();
             });
 
+            element.addClass('Busy');
+            setTimeout(function() { element.removeClass('Busy')}, 200);
+
             // call output.update for each output 
         };
 
@@ -221,12 +248,10 @@ $.widget("ui.nodeEditor", {
                 console.log('something is wrong setting output function ' + node.label);
             }
         });
-
         //console.groupEnd();
     },
 
     _updateTip: function(element, node, result) {
-        //console.log('updateTip()');
         var tipString;
 
         if (node.label && node.state) {
@@ -252,12 +277,12 @@ $.widget("ui.nodeEditor", {
 
             var editorPosition = $(that.element).offset();
             var pos = {
-                'top': ev.pageY - editorPosition.top,
-                'left': ev.pageX - editorPosition.left
+                'top': $(this).offset().top - editorPosition.top + $(this).height()/2,
+                'left': $(this).offset().left - editorPosition.left + $(this).width()/2
             }
 
             var wireBox = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
-                .attr('id', 'ui-nodeEditor-activeWire')
+                .addClass('ui-nodeEditor-activeWire')
                 .data({
                     'clickStartPosition': pos,
                     'clickStartConnector': $(this)
@@ -265,7 +290,6 @@ $.widget("ui.nodeEditor", {
                 .css({
                     'top': pos.top,
                     'left': pos.left
-                    //'background-color': '#fcc',
                 })
                 .appendTo(that.nodeField);
 
@@ -274,63 +298,76 @@ $.widget("ui.nodeEditor", {
         });
 
         this.nodeField.on('mousemove', function(ev) {
-            if ($('#ui-nodeEditor-activeWire').length) {
-                var wire = $('#ui-nodeEditor-activeWire');
-                var wirePosition = wire.data('clickStartPosition');
+            var editorPosition = $(that.element).offset();
 
-                var position = wire.position();
-                var editorPosition = $(that.element).offset();
+            $('.ui-nodeEditor-activeWire').each(function(ix, wire) {
+                wire = $(wire);
+                var startConnector = wire.data('clickStartConnector');
+                var endConnector = wire.data('clickEndConnector');
 
-                var wirePageX = wirePosition.left + editorPosition.left;
-                var wirePageY = wirePosition.top + editorPosition.top;
+                var start = startConnector.offset();
+                var boxStartY = start.top  - editorPosition.top  + startConnector.height()/2;
+                var boxStartX = start.left - editorPosition.left + startConnector.width()/2;
 
-                wire.css({
-                    'width': ev.pageX - editorPosition.left - position.left,
-                    'top': wirePosition.top,
-                    'left': wirePosition.left,
-                    'height': ev.pageY - editorPosition.top - position.top
-                    //'background-color': '#fcc'
-                });
+                var end, boxEndY, boxEndX;
 
-                if (ev.pageX < wirePageX) {
-                    //console.log('left of start');
-                    wire.css({
-                        'left': ev.pageX - editorPosition.left,
-                        'width': wirePageX - ev.pageX
-                        //'background-color': '#cfc'
-                    });
+
+                if (endConnector) {
+                    // wire already connected (node is being dragged)
+                    end = endConnector.offset();
+                    boxEndY   = end.top  - editorPosition.top  + endConnector.height()/2;
+                    boxEndX   = end.left - editorPosition.left + endConnector.width()/2;
+                }
+                else {
+                    // wire not connected yet, (wire is being dragged)
+                    end = {
+                        left: ev.pageX,
+                        top:  ev.pageY
+                    };
+                    boxEndY   = end.top  - editorPosition.top;
+                    boxEndX   = end.left - editorPosition.left;
+                }
+
+
+                wireCSS = {
+                    'top':  boxStartY,
+                    left:   boxStartX,
+                    width:  boxEndX - boxStartX,
+                    height: boxEndY - boxStartY
+                };
+
+                if (wireCSS.width < 0) {
+                    wireCSS.left = boxEndX;
+                    wireCSS.width = boxStartX - boxEndX;
                     wire.children().addClass('flip');
                 }
                 else {
                     wire.children().removeClass('flip');
                 }
 
-                if (ev.pageY < wirePageY) {
-                    //console.log('above start');
-                    wire.css({
-                        'top': ev.pageY - editorPosition.top,
-                        'height': wirePageY - ev.pageY
-                        //'background-color': '#ccf'
-                    });
+                if (wireCSS.height < 0) {
+                    wireCSS.top = boxEndY;
+                    wireCSS.height = boxStartY - boxEndY;
                     wire.addClass('flip');
                 }
                 else {
                     wire.removeClass('flip');
                 }
 
-            }
+                wire.css(wireCSS);
+            });
         });
 
         this.nodeField.on('mouseup', '.ui-nodeEditor-nodeConnector', function(ev) {
 
-            if ($('#ui-nodeEditor-activeWire').length) {
+            if ($('.ui-nodeEditor-activeWire').length) {
                 ev.stopPropagation();
                 console.log('making connection!');
 
-                var wire = $('#ui-nodeEditor-activeWire');
+                var wire = $('.ui-nodeEditor-activeWire');
                 var wireOrigin = wire.data('clickStartConnector');
 
-                wire.attr('id', '');
+                wire.removeClass('ui-nodeEditor-activeWire');
 
                 wire.data('clickEndConnector', $(this));
 
@@ -342,12 +379,18 @@ $.widget("ui.nodeEditor", {
                       from = $(this);
                       to   = wireOrigin;
 
+                      from.data('wire', wire);
+                      to.data('wire', wire);
+
                 }
                 else if (  $(this).hasClass('ui-nodeEditor-nodeInputConnector') &&
                       wireOrigin.hasClass('ui-nodeEditor-nodeOutputConnector')) {
 
                       from = wireOrigin;
                       to   = $(this);
+
+                      from.data('wire', wire);
+                      to.data('wire', wire);
                 }
                 else {
                     console.error('Tried to connect input to input or output to output');
@@ -356,7 +399,7 @@ $.widget("ui.nodeEditor", {
                 }
 
 
-                console.log('Connection from %s to %s', from.parent().text(), to.parent().text());
+                //console.log('Connection from %s to %s', from.parent().text(), to.parent().text());
                 var getPromise = from.data('deferred');
 
                 getPromise.progress(function(data) {
@@ -367,10 +410,10 @@ $.widget("ui.nodeEditor", {
         });
 
         this.nodeField.on('mouseup', function() {
-            if ($('#ui-nodeEditor-activeWire').length) {
+            if ($('.ui-nodeEditor-activeWire').length && !that.nodeDrag) {
                 console.log('releasing wire');
 
-                $('#ui-nodeEditor-activeWire').empty().remove();
+                $('.ui-nodeEditor-activeWire').empty().remove();
             }
         });
 
