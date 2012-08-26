@@ -281,7 +281,8 @@ $.widget("ui.nodeEditor", {
                 console.log('moving existing wire');
                 $(wireData).addClass('ui-nodeEditor-activeWire');
                 $(wireData).data('clickEndConnector', null);
-                $(this).data('update')(0);
+                $(this).data('update')(null);
+                $(this).data('wire', null);
             }
             else {
                 var editorPosition = $(that.element).offset();
@@ -290,17 +291,30 @@ $.widget("ui.nodeEditor", {
                     'left': $(this).offset().left - editorPosition.left + $(this).width()/2
                 }
 
-                var wireBox = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
+                var wire = $('<div class="ui-nodeEditor-wire"><div class="wire1" /><div class="wire2"/></div>')
                     .addClass('ui-nodeEditor-activeWire')
                     .data({
                         'clickStartPosition': pos,
-                        'clickStartConnector': $(this)
+                        'clickStartConnector': $(this),
+                        'disconnect': function() {
+                            console.log('wire.disconnect()');
+                            var to = $(wire).data('to');
+                            var from = $(wire).data('from');
+                            if (to) {
+                                $(to).data('wire', null)
+                            }
+                            if (from) {
+                                $(from).data('wire', null)
+                            }
+                            wire.empty().remove();
+                        }
                     })
                     .css({
                         'top': pos.top,
                         'left': pos.left
                     })
                     .appendTo(that.nodeField);
+
             }
         });
 
@@ -367,6 +381,16 @@ $.widget("ui.nodeEditor", {
 
         this.nodeField.on('mouseup', '.ui-nodeEditor-nodeConnector', function(ev) {
 
+            
+            if ($(this).hasClass('ui-nodeEditor-nodeInputConnector')) {
+                console.log('mouseup on input');
+                var oldWire = $(this).data('wire');
+
+                if (oldWire) {
+                    $(oldWire).data('disconnect')();
+                }
+            }
+
             if ($('.ui-nodeEditor-activeWire').length) {
                 ev.stopPropagation();
                 console.log('making connection!');
@@ -405,6 +429,9 @@ $.widget("ui.nodeEditor", {
                     return;
                 }
 
+                wire.data('from', from);
+                wire.data('to', to);
+
 
                 //console.log('Connection from %s to %s', from.parent().text(), to.parent().text());
                 var getPromise = from.data('deferred');
@@ -423,9 +450,7 @@ $.widget("ui.nodeEditor", {
                 $('.ui-nodeEditor-activeWire').empty().remove();
             }
         });
-
     }
-
 });
 
 })( jQuery );
