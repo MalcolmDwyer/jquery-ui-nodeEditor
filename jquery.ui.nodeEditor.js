@@ -146,6 +146,11 @@ $.widget("ui.nodeEditor", {
               .appendTo(nodeElement);
         });
 
+        if (node.display) {
+            var displayDiv = $('<div class="ui-nodeEditor-nodeDisplay"></div>')
+                .appendTo(nodeElement);
+        }
+
         node.outputs = node.outputs || [];
         $.each(node.outputs, function(idx, output) {
             var outputDiv = $('<div class="ui-nodeEditor-nodeIO ui-nodeEditor-nodeOutput">' +
@@ -195,6 +200,15 @@ $.widget("ui.nodeEditor", {
             }
 
             that._updateTip(element, node);
+
+            if (node.display) {
+                if (node.state.inputs[node.display] !== null) {
+                    element.find('.ui-nodeEditor-nodeDisplay').text(node.state.inputs[node.display]);
+                }
+                else {
+                    element.find('.ui-nodeEditor-nodeDisplay').text('');
+                }
+            }
 
             //console.log('new state:');
             //console.log(node.state);

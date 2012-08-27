@@ -36,18 +36,20 @@ $(document).ready(function() {
                         }
                     ]
                 },
-                /*{
+                {
                     label: 'Display',
                     inputs: [
                         {
-                            id: 'A',
-                            label: 'A'
+                            id: 'In',
+                            label: 'In'
                         }
                     ],
-                    display: function(inputs, properties) {
-                        
-                    }
-                },*/
+                    //display: function(inputs, properties) {
+                        //return 'In';
+                    //}
+                    //display: true
+                    display: 'In'
+                },
                 {
                     label: 'Add',
                     inputs: [
@@ -80,6 +82,126 @@ $(document).ready(function() {
 
                                 console.log('Sum fn() A:' + inputs.A + '  B:' + inputs.B);
                                 var out = parseInt(inputs.A + inputs.B);
+                                console.log('    -->  ' + out);
+                                d.resolve(out);
+                                console.groupEnd();
+                                return d.promise();
+                            }
+                        }
+                    ]
+                },
+                {
+                    label: 'Subtract',
+                    inputs: [
+                        {
+                            id: 'A',
+                            label: 'A'
+                        },
+                        {
+                            id: 'B',
+                            label: 'B'
+                        }
+                    ],
+                    outputs: [
+                        {
+                            label: 'Difference',
+                            fn: function(nodeState) {
+                                console.group('Sub fn()');
+                                //console.log(nodeState);
+                                var d = $.Deferred();
+                                if (typeof nodeState === 'undefined') {
+                                    console.error('Node state undefined');
+                                    d.reject();
+                                    console.groupEnd();
+                                    return d.promise();
+                                }
+
+                                inputs = nodeState.inputs || {};
+                                inputs.A = inputs.A || 0;
+                                inputs.B = inputs.B || 0;
+
+                                console.log('Subtract fn() A:' + inputs.A + '  B:' + inputs.B);
+                                var out = parseInt(inputs.A - inputs.B);
+                                console.log('    -->  ' + out);
+                                d.resolve(out);
+                                console.groupEnd();
+                                return d.promise();
+                            }
+                        }
+                    ]
+                },
+                {
+                    label: 'Multiply',
+                    inputs: [
+                        {
+                            id: 'A',
+                            label: 'A'
+                        },
+                        {
+                            id: 'B',
+                            label: 'B'
+                        }
+                    ],
+                    outputs: [
+                        {
+                            label: 'Product',
+                            fn: function(nodeState) {
+                                console.group('Sum fn()');
+                                //console.log(nodeState);
+                                var d = $.Deferred();
+                                if (typeof nodeState === 'undefined') {
+                                    console.error('Node state undefined');
+                                    d.reject();
+                                    console.groupEnd();
+                                    return d.promise();
+                                }
+
+                                inputs = nodeState.inputs || {};
+                                inputs.A = inputs.A || 0;
+                                inputs.B = inputs.B || 0;
+
+                                console.log('Sum fn() A:' + inputs.A + '  B:' + inputs.B);
+                                var out = parseInt(inputs.A * inputs.B);
+                                console.log('    -->  ' + out);
+                                d.resolve(out);
+                                console.groupEnd();
+                                return d.promise();
+                            }
+                        }
+                    ]
+                },
+                {
+                    label: 'Divide',
+                    inputs: [
+                        {
+                            id: 'A',
+                            label: 'A'
+                        },
+                        {
+                            id: 'B',
+                            label: 'B'
+                        }
+                    ],
+                    outputs: [
+                        {
+                            label: 'Div',
+                            fn: function(nodeState) {
+                                console.group('Sum fn()');
+                                //console.log(nodeState);
+                                var d = $.Deferred();
+                                if (typeof nodeState === 'undefined') {
+                                    console.error('Node state undefined');
+                                    d.reject();
+                                    console.groupEnd();
+                                    return d.promise();
+                                }
+
+                                inputs = nodeState.inputs || {};
+                                inputs.A = inputs.A || 0;
+                                inputs.B = inputs.B || 0;
+
+                                console.log('Sum fn() A:' + inputs.A + '  B:' + inputs.B);
+                                var out = parseInt(inputs.A / inputs.B);
                                 console.log('    -->  ' + out);
                                 d.resolve(out);
                                 console.groupEnd();

@@ -120,6 +120,20 @@ http://opensource.org/licenses/mit-license.php/
     /*border: solid 1px #eee;*/
 }
 
+.ui-nodeEditor-nodeDisplay {
+    text-align: center;
+    font-size: 15px;
+    width: 100%;
+    line-height: 18px;
+    height: 18px;
+    margin-bottom: 4px;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+
+}
+
 .ui-nodeEditor-nodeInput {
     text-align: left;
 }
