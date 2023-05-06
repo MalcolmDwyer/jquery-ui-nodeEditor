@@ -30,4 +30,4 @@ The widget allows the end-user to:
   * Preview results at various points in the graph (assuming this makes sense for that data).
 
 
-![Screenshot of editor demo(/jquery-ui-node-editor.png)]
+![Screenshot of editor demo(https:///jquery-ui-node-editor.png)]
